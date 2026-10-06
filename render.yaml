@@ -1,0 +1,34 @@
+databases:
+  - name: castro-materiais-db
+    plan: free
+    databaseName: castro_materiais
+    user: castro_materiais
+
+services:
+  - type: web
+    name: castro-materiais
+    env: docker
+    plan: free
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DB_HOST
+        fromDatabase:
+          name: castro-materiais-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: castro-materiais-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: castro-materiais-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: castro-materiais-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: castro-materiais-db
+          property: password

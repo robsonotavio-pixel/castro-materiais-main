@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - Castro Materiais</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <img src="img/logo.png" alt="Logo Castro Materiais">
+            </div>
+
+            <ul>
+
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+
+                <li>
+                    <a href="material.html">
+                        <i class="fas fa-box"></i> Materiais
+                    </a>
+                </li>
+
+                <li>
+                    <a href="cliente.html">
+                        <i class="fas fa-users"></i> Clientes
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pedidos.html">
+                        <i class="fas fa-cart-shopping"></i> Pedidos
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pagamentos.html">
+                        <i class="fas fa-money-bill"></i> Pagamentos
+                    </a>
+                </li>
+
+                <li>
+                    <a href="relatorios.html">
+                        <i class="fas fa-chart-column"></i> Relatórios
+                    </a>
+                </li>
+
+                <li>
+                    <a href="configuracao.html">
+                        <i class="fas fa-gear"></i> Configurações
+                    </a>
+                </li>
+
+                <li class="active">
+                    <a href="perfil.html">
+                        <i class="fas fa-user"></i> Perfil
+                    </a>
+                </li>
+
+            </ul>
+
+        </aside>
+
+        <main class="content">
+
+            <h1>Perfil do Usuário</h1>
+
+            <div class="form-box">
+
+                <div style="text-align:center; margin-bottom:30px;">
+                    <img src="img/logo.png" alt="Foto de Perfil"
+                        style="width:100px; height:100px; border-radius:50%; object-fit:cover; border: 3px solid #ff6b00;">
+                </div>
+
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" id="input-nome" value="Robson Otávio">
+                </div>
+
+                <div class="form-group">
+                    <label>Senha Atual</label>
+                    <input type="password" id="input-senha-atual" placeholder="Digite sua senha atual">
+                </div>
+
+                <div class="form-group">
+                    <label>Nova Senha</label>
+                    <input type="password" id="input-nova-senha" placeholder="Digite a nova senha">
+                </div>
+
+                <div class="form-group">
+                    <label>Confirmar Nova Senha</label>
+                    <input type="password" id="input-confirmar-senha" placeholder="Confirme a nova senha">
+                </div>
+
+                <div class="buttons">
+                    <button type="button" id="btn-salvar" class="btn-save">
+                        <i class="fas fa-check"></i> Salvar Perfil
+                    </button>>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+    <script>
+
+    const btnSalvar = document.querySelector('#btn-salvar')
+
+    btnSalvar.addEventListener('click', function() {
+
+        const nome          = document.querySelector('#input-nome').value
+        const novaSenha     = document.querySelector('#input-nova-senha').value
+        const confirmarSenha = document.querySelector('#input-confirmar-senha').value
+
+    
+        document.querySelectorAll('.erro').forEach(el => el.classList.remove('erro'))
+        document.querySelectorAll('.mensagem-erro').forEach(el => el.remove())
+
+        let valido = true
+
+        
+        if (!nome.trim()) {
+            const input = document.querySelector('#input-nome')
+            input.classList.add('erro')
+            const msg = document.createElement('span')
+            msg.classList.add('mensagem-erro')
+            msg.textContent = 'Nome é obrigatório'
+            input.parentElement.appendChild(msg)
+            valido = false
+        }
+
+        
+        if (novaSenha && novaSenha !== confirmarSenha) {
+            const input = document.querySelector('#input-confirmar-senha')
+            input.classList.add('erro')
+            const msg = document.createElement('span')
+            msg.classList.add('mensagem-erro')
+            msg.textContent = 'As senhas não coincidem'
+            input.parentElement.appendChild(msg)
+            valido = false
+        }
+
+        if (valido) {
+            alert('Perfil salvo com sucesso!')
+        }
+
+    })
+    
+
+</script>
+
+</body>
+
+</html>

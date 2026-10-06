@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Cliente - Castro Materiais</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <img src="img/logo.png" alt="Logo Castro Materiais">
+            </div>
+
+            <ul>
+
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+
+                <li>
+                    <a href="material.html">
+                        <i class="fas fa-box"></i> Materiais
+                    </a>
+                </li>
+
+                <li class="active">
+                    <a href="cliente.html">
+                        <i class="fas fa-users"></i> Clientes
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pedidos.html">
+                        <i class="fas fa-cart-shopping"></i> Pedidos
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pagamentos.html">
+                        <i class="fas fa-money-bill"></i> Pagamentos
+                    </a>
+                </li>
+
+                <li>
+                    <a href="relatorios.html">
+                        <i class="fas fa-chart-column"></i> Relatórios
+                    </a>
+                </li>
+
+                <li>
+                    <a href="configuracao.html">
+                        <i class="fas fa-gear"></i> Configurações
+                    </a>
+                </li>
+
+                <li>
+                    <a href="perfil.html">
+                        <i class="fas fa-user"></i> Perfil
+                    </a>
+                </li>
+
+            </ul>
+
+        </aside>
+
+        <main class="content">
+
+            <div class="top-bar">
+                <h1>Novo Cliente</h1>
+                <a href="cliente.html" class="btn-cancel">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+
+            <div class="form-box">
+
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" id="input-nome" placeholder="Ex: João da Silva">
+                </div>
+
+                <div class="form-group">
+                    <label>CPF/CNPJ</label>
+                    <input type="text" id="input-cpf" placeholder="000.000.000-00">
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label>Telefone</label>
+                     <input type="text" id="input-telefone" placeholder="(00) 99999-9999">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="input-email" placeholder="email@exemplo.com">
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Endereço</label>
+                    <input type="text" id="input-endereco" placeholder="Rua, número, bairro">
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label>Cidade</label>
+                        <input type="text" id="input-cidade" placeholder="Ex: Brasília">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <input type="text" id="input-estado" placeholder="Ex: DF">
+                    </div>
+
+                </div>
+
+                <div class="buttons">
+                    <a href="cliente.html" class="btn-cancel">Cancelar</a>
+                    <button type="button" id="btn-salvar" class="btn-save">
+                        <i class="fas fa-check"></i> Salvar Cliente
+                    </button>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+    <script src="js/api.js"></script>
+    <script>
+
+        const btnSalvar = document.querySelector('#btn-salvar')
+
+        btnSalvar.addEventListener('click', async function (e) {
+
+            e.preventDefault()
+
+            let valido = true
+
+            const campos = [
+                { id: 'input-nome', mensagem: 'Nome é obrigatório' },
+                { id: 'input-cpf', mensagem: 'CPF/CNPJ é obrigatório' },
+                { id: 'input-telefone', mensagem: 'Telefone é obrigatório' },
+                { id: 'input-cidade', mensagem: 'Cidade é obrigatória' },
+            ]
+
+
+            document.querySelectorAll('.erro').forEach(el => el.classList.remove('erro'))
+            document.querySelectorAll('.mensagem-erro').forEach(el => el.remove())
+
+
+            campos.forEach(function (campo) {
+
+                const input = document.querySelector('#' + campo.id)
+
+                if (!input.value.trim()) {
+
+                    input.classList.add('erro')
+
+                    const msg = document.createElement('span')
+                    msg.classList.add('mensagem-erro')
+                    msg.textContent = campo.mensagem
+                    input.parentElement.appendChild(msg)
+
+                    valido = false
+                }
+
+            })
+
+            if (!valido) return
+
+            const cliente = {
+                nome: document.querySelector('#input-nome').value,
+                cpf: document.querySelector('#input-cpf').value,
+                telefone: document.querySelector('#input-telefone').value,
+                email: document.querySelector('#input-email').value,
+                endereco: document.querySelector('#input-endereco').value,
+                cidade: document.querySelector('#input-cidade').value,
+                estado: document.querySelector('#input-estado').value
+            }
+
+            try {
+                await apiPost('/clientes', cliente)
+                alert('Cliente salvo com sucesso!')
+                window.location.href = 'cliente.html'
+            } catch (erro) {
+                alert('Erro ao salvar cliente')
+            }
+
+        })
+
+    </script>
+
+</body>
+
+</html>

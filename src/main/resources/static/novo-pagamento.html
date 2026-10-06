@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Pagamento - Castro Materiais</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <img src="img/logo.png" alt="Logo Castro Materiais">
+            </div>
+
+            <ul>
+
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+
+                <li>
+                    <a href="material.html">
+                        <i class="fas fa-box"></i> Materiais
+                    </a>
+                </li>
+
+                <li>
+                    <a href="cliente.html">
+                        <i class="fas fa-users"></i> Clientes
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pedidos.html">
+                        <i class="fas fa-cart-shopping"></i> Pedidos
+                    </a>
+                </li>
+
+                <li class="active">
+                    <a href="pagamentos.html">
+                        <i class="fas fa-money-bill"></i> Pagamentos
+                    </a>
+                </li>
+
+                <li>
+                    <a href="relatorios.html">
+                        <i class="fas fa-chart-column"></i> Relatórios
+                    </a>
+                </li>
+
+                <li>
+                    <a href="configuracao.html">
+                        <i class="fas fa-gear"></i> Configurações
+                    </a>
+                </li>
+
+                <li>
+                    <a href="perfil.html">
+                        <i class="fas fa-user"></i> Perfil
+                    </a>
+                </li>
+
+            </ul>
+
+        </aside>
+
+        <main class="content">
+
+            <div class="top-bar">
+                <h1>Novo Pagamento</h1>
+                <a href="pagamentos.html" class="btn-cancel">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+
+            <div class="form-box">
+
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <select id="select-cliente">
+                        <option value="">Selecione um cliente...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Pedido <span style="font-weight:400; color:#94a3b8;">(opcional)</span></label>
+                    <select id="select-pedido">
+                        <option value="">Nenhum</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" id="input-valor" min="0" step="0.01" placeholder="0,00">
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label>Forma de Pagamento</label>
+                        <select id="select-metodo">
+                            <option>PIX</option>
+                            <option>Cartão de Crédito</option>
+                            <option>Cartão de Débito</option>
+                            <option>Boleto</option>
+                            <option>Dinheiro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="select-status">
+                            <option>Pago</option>
+                            <option>Pendente</option>
+                            <option>Cancelado</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Data do Pagamento</label>
+                    <input type="date" id="input-data">
+                </div>
+
+                <div class="buttons">
+                    <a href="pagamentos.html" class="btn-cancel">Cancelar</a>
+                    <button type="button" id="btn-salvar" class="btn-save">
+                        <i class="fas fa-check"></i> Salvar Pagamento
+                    </button>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+<script src="js/api.js"></script>
+<script>
+
+    const selectCliente = document.querySelector('#select-cliente')
+    const selectPedido = document.querySelector('#select-pedido')
+
+    async function carregarClientes() {
+        const clientes = await apiGet('/clientes')
+        clientes.forEach(function(cliente) {
+            const opcao = document.createElement('option')
+            opcao.value = cliente.id
+            opcao.textContent = cliente.nome
+            selectCliente.appendChild(opcao)
+        })
+    }
+
+    async function carregarPedidos() {
+        const pedidos = await apiGet('/pedidos')
+        pedidos.forEach(function(pedido) {
+            const opcao = document.createElement('option')
+            opcao.value = pedido.id
+            opcao.textContent = `#${pedido.id} - ${pedido.cliente ? pedido.cliente.nome : ''}`
+            selectPedido.appendChild(opcao)
+        })
+    }
+
+    const btnSalvar = document.querySelector('#btn-salvar')
+
+    btnSalvar.addEventListener('click', async function(e) {
+
+        e.preventDefault()
+
+        let valido = true
+
+        const campos = [
+            { id: 'input-valor', mensagem: 'Valor é obrigatório' },
+            { id: 'input-data',  mensagem: 'Data é obrigatória'  },
+        ]
+
+        document.querySelectorAll('.erro').forEach(el => el.classList.remove('erro'))
+        document.querySelectorAll('.mensagem-erro').forEach(el => el.remove())
+
+        campos.forEach(function(campo) {
+
+            const input = document.querySelector('#' + campo.id)
+
+            if (!input.value.trim()) {
+                input.classList.add('erro')
+
+                const msg = document.createElement('span')
+                msg.classList.add('mensagem-erro')
+                msg.textContent = campo.mensagem
+                input.parentElement.appendChild(msg)
+
+                valido = false
+            }
+
+        })
+
+        if (!selectCliente.value) {
+            selectCliente.classList.add('erro')
+            const msg = document.createElement('span')
+            msg.classList.add('mensagem-erro')
+            msg.textContent = 'Selecione um cliente'
+            selectCliente.parentElement.appendChild(msg)
+            valido = false
+        }
+
+        if (!valido) return
+
+        const pagamento = {
+            valor: parseFloat(document.querySelector('#input-valor').value),
+            metodo: document.querySelector('#select-metodo').value,
+            status: document.querySelector('#select-status').value,
+            data: document.querySelector('#input-data').value,
+            cliente: { id: Number(selectCliente.value) }
+        }
+
+        if (selectPedido.value) {
+            pagamento.pedido = { id: Number(selectPedido.value) }
+        }
+
+        try {
+            await apiPost('/pagamentos', pagamento)
+            alert('Pagamento salvo com sucesso!')
+            window.location.href = 'pagamentos.html'
+        } catch (erro) {
+            alert('Erro ao salvar pagamento')
+        }
+
+    })
+
+    carregarClientes()
+    carregarPedidos()
+
+</script>
+</body>
+
+</html>

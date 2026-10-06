@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Pedido - Castro Materiais</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <img src="img/logo.png" alt="Logo Castro Materiais">
+            </div>
+
+            <ul>
+
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+
+                <li>
+                    <a href="material.html">
+                        <i class="fas fa-box"></i> Materiais
+                    </a>
+                </li>
+
+                <li>
+                    <a href="cliente.html">
+                        <i class="fas fa-users"></i> Clientes
+                    </a>
+                </li>
+
+                <li class="active">
+                    <a href="pedidos.html">
+                        <i class="fas fa-cart-shopping"></i> Pedidos
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pagamentos.html">
+                        <i class="fas fa-money-bill"></i> Pagamentos
+                    </a>
+                </li>
+
+                <li>
+                    <a href="relatorios.html">
+                        <i class="fas fa-chart-column"></i> Relatórios
+                    </a>
+                </li>
+
+                <li>
+                    <a href="configuracao.html">
+                        <i class="fas fa-gear"></i> Configurações
+                    </a>
+                </li>
+
+                <li>
+                    <a href="perfil.html">
+                        <i class="fas fa-user"></i> Perfil
+                    </a>
+                </li>
+
+            </ul>
+
+        </aside>
+
+        <main class="content">
+
+            <div class="top-bar">
+                <h1>Novo Pedido</h1>
+                <a href="pedidos.html" class="btn-cancel">
+                    <i class="fas fa-arrow-left"></i> Voltar
+                </a>
+            </div>
+
+            <div class="form-box">
+
+                <h2
+                    style="font-size:16px; color:#0f172a; margin-bottom:20px; padding-bottom:12px; border-bottom:1px solid #f1f5f9;">
+                    <i class="fas fa-clipboard" style="color:#ff6b00; margin-right:8px;"></i>
+                    Dados do Pedido
+                </h2>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <select id="select-cliente">
+                            <option value="">Selecione um cliente...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Data do Pedido</label>
+                        <input type="date" id="input-data">
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="select-status">
+                        <option>Pendente</option>
+                        <option>Pago</option>
+                        <option>Cancelado</option>
+                    </select>
+                </div>
+
+                <h2
+                    style="font-size:16px; color:#0f172a; margin:28px 0 20px; padding-bottom:12px; border-bottom:1px solid #f1f5f9;">
+                    <i class="fas fa-boxes-stacked" style="color:#ff6b00; margin-right:8px;"></i>
+                    Itens do Pedido
+                </h2>
+
+                <div class="form-row" style="align-items:flex-end;">
+
+                    <div class="form-group">
+                        <label>Material</label>
+                        <select id="select-material">
+                            <option value="">Selecione um material...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantidade</label>
+                        <input type="number" id="input-quantidade" placeholder="Ex: 2" min="1" step="any">
+                    </div>
+
+                    <div class="form-group" style="justify-content:flex-end;">
+                        <button type="button" id="btn-adicionar" class="btn-green">
+                            <i class="fas fa-plus"></i> Adicionar
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="table-box"
+                    style="margin-top:10px; margin-bottom:28px; box-shadow:none; border:1px solid #f1f5f9; padding:16px;">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Unidade</th>
+                                <th>Qtd</th>
+                                <th>Preço Unit.</th>
+                                <th>Subtotal</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-itens">
+                        </tbody>
+
+                    </table>
+
+                    <div
+                        style="display:flex; justify-content:flex-end; margin-top:16px; padding-top:16px; border-top:2px solid #f1f5f9;">
+                        <div style="text-align:right;">
+                            <span
+                                style="font-size:13px; color:#64748b; text-transform:uppercase; letter-spacing:0.5px;">Total
+                                do Pedido</span>
+                            <div style="font-size:26px; font-weight:700; color:#0f172a; margin-top:4px;">
+                                <span id="total-pedido">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Observações <span style="font-weight:400; color:#94a3b8;">(opcional)</span></label>
+                    <textarea rows="3" placeholder="Ex: Entregar no período da manhã..."></textarea>
+                </div>
+
+                <div class="buttons">
+                    <a href="pedidos.html" class="btn-cancel">Cancelar</a>
+                    <button type="button" id="btn-salvar" class="btn-save">
+                        <i class="fas fa-check"></i> Salvar Pedido
+                    </button>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+    <script src="js/api.js"></script>
+    <script>
+
+        let materiais = []
+        const itensAdicionados = []
+
+        const selectCliente = document.querySelector('#select-cliente')
+        const selectMaterial = document.querySelector('#select-material')
+        const inputQuantidade = document.querySelector('#input-quantidade')
+        const btnAdicionar = document.querySelector('#btn-adicionar')
+        const tabelaItens = document.querySelector('#tabela-itens')
+        const totalPedido = document.querySelector('#total-pedido')
+
+        async function carregarClientes() {
+            const clientes = await apiGet('/clientes')
+            clientes.forEach(function(cliente) {
+                const opcao = document.createElement('option')
+                opcao.value = cliente.id
+                opcao.textContent = cliente.nome
+                selectCliente.appendChild(opcao)
+            })
+        }
+
+        async function carregarMateriais() {
+            materiais = await apiGet('/materiais')
+            materiais.forEach(function(material) {
+                const opcao = document.createElement('option')
+                opcao.value = material.id
+                opcao.textContent = `${material.nome} — ${material.unidade ?? ''} — R$ ${Number(material.preco).toFixed(2)}`
+                selectMaterial.appendChild(opcao)
+            })
+        }
+
+        let total = 0
+        btnAdicionar.addEventListener('click', function () {
+
+            const materialId = selectMaterial.value
+            const quantidade = parseFloat(inputQuantidade.value)
+
+            if (!materialId || !quantidade || quantidade <= 0) {
+                alert('Selecione um material e informe a quantidade!')
+                return
+            }
+
+            const material = materiais.find(m => String(m.id) === materialId)
+            const subtotal = material.preco * quantidade
+
+            itensAdicionados.push({ materialId: material.id, quantidade, subtotal })
+
+            const linha = document.createElement('tr')
+            linha.innerHTML = `
+            <td>${material.nome}</td>
+            <td>${material.unidade ?? ''}</td>
+            <td>${quantidade}</td>
+            <td>R$ ${material.preco.toFixed(2)}</td>
+            <td>R$ ${subtotal.toFixed(2)}</td>
+            <td>
+                <button class="btn-delete btn-remover">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `
+
+            tabelaItens.appendChild(linha)
+
+            total += subtotal
+            totalPedido.textContent = 'R$ ' + total.toFixed(2)
+
+            linha.querySelector('.btn-remover').addEventListener('click', function () {
+                total -= subtotal
+                totalPedido.textContent = 'R$ ' + total.toFixed(2)
+                const indice = itensAdicionados.findIndex(i => i.materialId === material.id && i.quantidade === quantidade && i.subtotal === subtotal)
+                if (indice !== -1) itensAdicionados.splice(indice, 1)
+                linha.remove()
+            })
+
+            selectMaterial.value = ''
+            inputQuantidade.value = ''
+
+        })
+
+        const btnSalvar = document.querySelector('#btn-salvar')
+
+        btnSalvar.addEventListener('click', async function(e) {
+
+            e.preventDefault()
+
+            let valido = true
+
+            document.querySelectorAll('.erro').forEach(el => el.classList.remove('erro'))
+            document.querySelectorAll('.mensagem-erro').forEach(el => el.remove())
+
+            if (!selectCliente.value) {
+                selectCliente.classList.add('erro')
+                const msg = document.createElement('span')
+                msg.classList.add('mensagem-erro')
+                msg.textContent = 'Selecione um cliente'
+                selectCliente.parentElement.appendChild(msg)
+                valido = false
+            }
+
+            const inputData = document.querySelector('#input-data')
+            if (!inputData.value) {
+                inputData.classList.add('erro')
+                const msg = document.createElement('span')
+                msg.classList.add('mensagem-erro')
+                msg.textContent = 'Data é obrigatória'
+                inputData.parentElement.appendChild(msg)
+                valido = false
+            }
+
+            if (itensAdicionados.length === 0) {
+                alert('Adicione pelo menos um material ao pedido!')
+                valido = false
+            }
+
+            if (!valido) return
+
+            try {
+                const pedido = await apiPost('/pedidos', {
+                    data: inputData.value,
+                    status: document.querySelector('#select-status').value,
+                    valorTotal: total,
+                    cliente: { id: Number(selectCliente.value) }
+                })
+
+                for (const item of itensAdicionados) {
+                    await apiPost('/itens-pedido', {
+                        quantidade: item.quantidade,
+                        pedido: { id: pedido.id },
+                        material: { id: item.materialId }
+                    })
+                }
+
+                alert('Pedido salvo com sucesso!')
+                window.location.href = 'pedidos.html'
+            } catch (erro) {
+                alert('Erro ao salvar pedido')
+            }
+
+        })
+
+        carregarClientes()
+        carregarMateriais()
+
+</script>
+</body>
+
+</html>

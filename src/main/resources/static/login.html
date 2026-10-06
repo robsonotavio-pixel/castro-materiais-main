@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Castro Materiais</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="login-box">
+
+            <img src="img/logo.png" alt="Logo Castro Materiais" class="login-logo">
+
+            <h2>Castro Materiais</h2>
+
+            <form>
+
+                <div class="form-group" style="text-align:left;">
+                    <label>E-mail</label>
+                    <input type="email" id="input-usuario" placeholder="Digite seu e-mail">
+                </div>
+
+                <div class="form-group" style="text-align:left;">
+                    <label>Senha</label>
+                    <input type="password" id="input-senha" placeholder="Digite sua senha">
+                </div>
+
+                <button class="btn-save" type="button" id="btn-entrar">
+                    <i class="fas fa-right-to-bracket"></i> Entrar
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+<script src="js/api.js"></script>
+<script>
+
+    const btnEntrar = document.querySelector('#btn-entrar')
+
+    btnEntrar.addEventListener('click', async function() {
+
+        const email = document.querySelector('#input-usuario').value
+        const senha = document.querySelector('#input-senha').value
+
+        if (!email || !senha) {
+            alert('Preencha e-mail e senha!')
+            return
+        }
+
+        try {
+            const usuario = await apiPost('/usuarios/login', { email, senha })
+            localStorage.setItem('usuarioLogado', JSON.stringify(usuario))
+            window.location.href = 'dashboard.html'
+        } catch (erro) {
+            alert('E-mail ou senha incorretos!')
+        }
+
+    })
+
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Castro Materiais</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <img src="img/logo.png" alt="Logo Castro Materiais">
+        </div>
+
+        <ul>
+
+            <li class="active">
+                <a href="dashboard.html">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+
+            <li>
+                <a href="material.html">
+                    <i class="fas fa-box"></i> Materiais
+                </a>
+            </li>
+
+            <li>
+                <a href="cliente.html">
+                    <i class="fas fa-users"></i> Clientes
+                </a>
+            </li>
+
+            <li>
+                <a href="pedidos.html">
+                    <i class="fas fa-cart-shopping"></i> Pedidos
+                </a>
+            </li>
+
+            <li>
+                <a href="pagamentos.html">
+                    <i class="fas fa-money-bill"></i> Pagamentos
+                </a>
+            </li>
+
+            <li>
+                <a href="relatorios.html">
+                    <i class="fas fa-chart-column"></i> Relatórios
+                </a>
+            </li>
+
+            <li>
+                <a href="configuracao.html">
+                    <i class="fas fa-gear"></i> Configurações
+                </a>
+            </li>
+
+            <li>
+                <a href="perfil.html">
+                    <i class="fas fa-user"></i> Perfil
+                </a>
+            </li>
+
+        </ul>
+
+    </aside>
+
+    <main class="content">
+
+        <h1>Dashboard</h1>
+
+        <div class="cards">
+
+            <div class="card">
+                <h3><i class="fas fa-dollar-sign"></i> Total de Vendas</h3>
+                <span id="card-vendas">R$ 0</span>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-cart-shopping"></i> Pedidos</h3>
+                <span id="card-pedidos">0</span>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-users"></i> Clientes</h3>
+                <span id="card-clientes">0</span>
+            </div>
+
+            <div class="card">
+                <h3><i class="fas fa-box"></i> Materiais</h3>
+                <span id="card-materiais">0</span>
+            </div>
+
+        </div>
+
+        <div class="table-box">
+
+            <h2>Pedidos Recentes</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Data</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tabela-recentes">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</div>
+<script src="js/api.js"></script>
+<script>
+
+    function classeBadge(status) {
+        if (status === 'Pago') return 'badge-pago'
+        if (status === 'Cancelado') return 'badge-cancelado'
+        return 'badge-pendente'
+    }
+
+    function formatarPreco(valor) {
+        return 'R$ ' + Number(valor ?? 0).toFixed(2).replace('.', ',')
+    }
+
+    async function carregarDashboard() {
+        try {
+            const [pedidos, clientes, materiais] = await Promise.all([
+                apiGet('/pedidos'),
+                apiGet('/clientes'),
+                apiGet('/materiais')
+            ])
+
+            const totalVendas = pedidos.reduce((soma, pedido) => soma + Number(pedido.valorTotal ?? 0), 0)
+
+            document.querySelector('#card-vendas').textContent = formatarPreco(totalVendas)
+            document.querySelector('#card-pedidos').textContent = pedidos.length
+            document.querySelector('#card-clientes').textContent = clientes.length
+            document.querySelector('#card-materiais').textContent = materiais.length
+
+            const recentes = pedidos.slice().sort((a, b) => b.id - a.id).slice(0, 5)
+            const tabela = document.querySelector('#tabela-recentes')
+            tabela.innerHTML = ''
+
+            recentes.forEach(function(pedido) {
+                const status = pedido.status ?? 'Pendente'
+                const linha = document.createElement('tr')
+                linha.innerHTML = `
+                    <td>${pedido.id}</td>
+                    <td>${pedido.cliente ? pedido.cliente.nome : ''}</td>
+                    <td>${pedido.data ?? ''}</td>
+                    <td>${formatarPreco(pedido.valorTotal)}</td>
+                    <td><span class="badge ${classeBadge(status)}">${status}</span></td>
+                `
+                tabela.appendChild(linha)
+            })
+
+        } catch (erro) {
+            alert('Erro ao carregar o dashboard')
+        }
+    }
+
+    carregarDashboard()
+
+</script>
+
+</body>
+</html>

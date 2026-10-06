@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes - Castro Materiais</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                <img src="img/logo.png" alt="Logo Castro Materiais">
+            </div>
+
+            <ul>
+
+                <li>
+                    <a href="dashboard.html">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+
+                <li>
+                    <a href="material.html">
+                        <i class="fas fa-box"></i> Materiais
+                    </a>
+                </li>
+
+                <li class="active">
+                    <a href="cliente.html">
+                        <i class="fas fa-users"></i> Clientes
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pedidos.html">
+                        <i class="fas fa-cart-shopping"></i> Pedidos
+                    </a>
+                </li>
+
+                <li>
+                    <a href="pagamentos.html">
+                        <i class="fas fa-money-bill"></i> Pagamentos
+                    </a>
+                </li>
+
+                <li>
+                    <a href="relatorios.html">
+                        <i class="fas fa-chart-column"></i> Relatórios
+                    </a>
+                </li>
+
+                <li>
+                    <a href="configuracao.html">
+                        <i class="fas fa-gear"></i> Configurações
+                    </a>
+                </li>
+
+                <li>
+                    <a href="perfil.html">
+                        <i class="fas fa-user"></i> Perfil
+                    </a>
+                </li>
+
+            </ul>
+
+        </aside>
+
+        <main class="content">
+
+            <div class="top-bar">
+                <h1>Clientes</h1>
+                <a href="novo-cliente.html" class="btn-green">
+                    <i class="fas fa-plus"></i> Novo Cliente
+                </a>
+            </div>
+
+            <div class="search-box">
+               <input type="text" id="input-busca" placeholder="Buscar cliente...">
+            </div>
+
+            <div class="table-box">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Telefone</th>
+                            <th>Cidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                   <tbody id="tabela-clientes">
+                   </tbody>
+
+                </table>
+
+            </div>
+
+        </main>
+
+    </div>
+<script src="js/api.js"></script>
+<script>
+
+    let clientes = []
+    const tabela = document.querySelector('#tabela-clientes')
+    const inputBusca = document.querySelector('#input-busca')
+
+    async function carregarClientes() {
+        try {
+            clientes = await apiGet('/clientes')
+            renderizarTabela(clientes)
+        } catch (erro) {
+            alert('Erro ao carregar clientes')
+        }
+    }
+
+    function renderizarTabela(lista) {
+        tabela.innerHTML = ''
+
+        lista.forEach(function(cliente) {
+            const linha = document.createElement('tr')
+            linha.dataset.id = cliente.id
+            linha.innerHTML = `
+                <td>${cliente.id}</td>
+                <td>${cliente.nome ?? ''}</td>
+                <td>${cliente.telefone ?? ''}</td>
+                <td>${cliente.cidade ?? ''}</td>
+                <td>
+                    <button class="btn-edit" onclick="editarLinha(this)"><i class="fas fa-pen"></i></button>
+                    <button class="btn-delete" onclick="excluirCliente(this)"><i class="fas fa-trash"></i></button>
+                </td>
+            `
+            tabela.appendChild(linha)
+        })
+    }
+
+    async function excluirCliente(botao) {
+        const linha = botao.closest('tr')
+        const id = linha.dataset.id
+
+        const confirmou = confirm('Tem certeza que deseja excluir?')
+        if (!confirmou) return
+
+        try {
+            await apiDelete('/clientes/' + id)
+            linha.remove()
+        } catch (erro) {
+            alert('Erro ao excluir cliente')
+        }
+    }
+
+    inputBusca.addEventListener('keyup', function() {
+        const termo = inputBusca.value.toLowerCase()
+        const linhas = tabela.querySelectorAll('tr')
+
+        linhas.forEach(function(linha) {
+            const texto = linha.textContent.toLowerCase()
+            linha.style.display = texto.includes(termo) ? '' : 'none'
+        })
+    })
+
+    function editarLinha(botao) {
+
+        const linha = botao.closest('tr')
+        const celulas = linha.querySelectorAll('td')
+        const editando = linha.classList.contains('editando')
+
+        if (!editando) {
+
+            for (let i = 1; i < celulas.length - 1; i++) {
+                const valorAtual = celulas[i].textContent.trim()
+                celulas[i].innerHTML = `<input type="text" value="${valorAtual}" style="width:100%; padding:6px; border:1px solid #ff6b00; border-radius:6px;">`
+            }
+
+            linha.classList.add('editando')
+            botao.innerHTML = '<i class="fas fa-check"></i>'
+            botao.style.background = '#16a34a'
+
+        } else {
+
+            const id = Number(linha.dataset.id)
+            const clienteAtual = clientes.find(c => c.id === id)
+
+            const nome = celulas[1].querySelector('input').value
+            const telefone = celulas[2].querySelector('input').value
+            const cidade = celulas[3].querySelector('input').value
+
+            const clienteAtualizado = Object.assign({}, clienteAtual, { nome, telefone, cidade })
+
+            apiPut('/clientes/' + id, clienteAtualizado).then(function(salvo) {
+
+                const indice = clientes.findIndex(c => c.id === id)
+                clientes[indice] = salvo
+
+                celulas[1].textContent = salvo.nome ?? ''
+                celulas[2].textContent = salvo.telefone ?? ''
+                celulas[3].textContent = salvo.cidade ?? ''
+
+                linha.classList.remove('editando')
+                botao.innerHTML = '<i class="fas fa-pen"></i>'
+                botao.style.background = ''
+
+                alert('Cliente atualizado com sucesso!')
+
+            }).catch(function() {
+                alert('Erro ao atualizar cliente')
+            })
+        }
+    }
+
+    carregarClientes()
+
+</script>
+
+</body>
+</html>
